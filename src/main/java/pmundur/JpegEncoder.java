@@ -56,6 +56,24 @@ public class JpegEncoder extends Frame
     };
 
 
+    private static BufferedImage process(BufferedImage old, int pos) {
+        int w = old.getWidth();
+        int h = old.getHeight();
+        BufferedImage img = new BufferedImage(
+                w, h, old.getType());
+        Graphics2D g2d = img.createGraphics();
+        g2d.drawImage(old, 0, 0, null);
+        g2d.setPaint(Color.red);
+        g2d.setFont(new Font("Serif", Font.BOLD, 20));
+        String s = "Hello, world! "+pos;
+        FontMetrics fm = g2d.getFontMetrics();
+        int x = img.getWidth() - fm.stringWidth(s) - 5;
+        int y = fm.getHeight();
+        g2d.drawString(s, x-pos*5, y);
+        g2d.dispose();
+        return img;
+    }
+
     public static void main(String[] args)
     {
         BufferedImage outputImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
@@ -65,7 +83,7 @@ public class JpegEncoder extends Frame
             //File img = new File("/home/ilya/fon.jpeg");
             File img = new File("fon.jpeg");
             outputImage = ImageIO.read(img);
-
+            outputImage=process(outputImage,20);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(outputImage, "jpg", baos);
             baos.flush();

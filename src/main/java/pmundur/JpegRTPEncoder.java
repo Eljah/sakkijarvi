@@ -137,18 +137,19 @@ public class JpegRTPEncoder extends Frame {
                 System.out.println("We consider RTP|JPEG markers before the compressed data:" + markers);
                 System.out.println("We consider JPEG markers before the compressed data:" + jpegmarkers+" and they really are "+jpermarkerheadrers);
                 System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize -markers - jpegmarkers));
-                WriteCompressedData(offset, frameSize -markers- jpegmarkers, outStream);
+                WriteCompressedData(offset, frameSize - markers - jpegmarkers, outStream);
             }
         } else {
-            System.out.println("We taking into account payload offset due to RTP|JPEG markers added in the first packet" + (offset - markers - jpegmarkers)+"while the initial offset was "+offset);
+            System.out.println("We taking into account payload offset due to RTP|JPEG markers added in the first packet" + (offset - markers - jpegmarkers) + "while the initial offset was " + offset);
             WriteRTPJPEGHeaders(outStream, offset - markers);
             System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize - jpermarkerheadrers));
             WriteCompressedData(offset-markers-jpegmarkers, frameSize- jpermarkerheadrers, outStream);
         }
         //WriteRestartMarker(outStream);
 
-        if (packetnum == 87) {
-            WriteEOI(outStream);
+        if (packetnum == 93){//87) {
+           WriteEOI(outStream);
+            //WriteEOI(outStream);
         }
         try {
             outStream.flush();
@@ -249,7 +250,10 @@ public class JpegRTPEncoder extends Frame {
         System.out.println(offset);
         System.out.println(offset + frame_size);
         System.out.println(imageInByteNotCompressed.length);
-        byte[] imageInByteNotCompressedFragmented = Arrays.copyOfRange(imageInByteNotCompressed, Math.min(offset, imageInByteNotCompressed.length - 1), Math.min((offset + frame_size), imageInByteNotCompressed.length - 1));
+        byte[] imageInByteNotCompressedFragmented = Arrays.copyOfRange(imageInByteNotCompressed, Math.min(offset, imageInByteNotCompressed.length),Math.min((offset + frame_size), imageInByteNotCompressed.length));
+        System.out.println("Cutting from " + (imageInByteNotCompressed.length)+" "+Math.min(offset, imageInByteNotCompressed.length)+"-"+Math.min((offset + frame_size), imageInByteNotCompressed.length));
+
+
         System.out.println("Length of fragment is " + imageInByteNotCompressedFragmented.length);
         System.out.println(imageInByteNotCompressedFragmented.length);
         //OutputStream bytesOutputStreamFragmented=new ByteArrayOutputStream();
@@ -397,7 +401,12 @@ public class JpegRTPEncoder extends Frame {
 // the SOI marker
         byte[] SOI = {(byte) 0xFF, (byte) 0xD8};
         markersByteCount=markersByteCount+SOI.length;
-        WriteMarker(SOI, out);
+        //WriteMarker(SOI, out);
+        try {
+            out.write(SOI, 0, 2);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
 // The order of the following headers is quiet inconsequential.
 // the JFIF header
@@ -452,8 +461,12 @@ public class JpegRTPEncoder extends Frame {
             }
         }
         markersByteCount=markersByteCount+DQT.length;
-        WriteArray(DQT, out);
-
+        //WriteArray(DQT, out);
+        try {
+            out.write(DQT, 0, 134);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    }
 // Start of Frame Header
         byte SOF[] = new byte[19];
         SOF[0] = (byte) 0xFF;
@@ -473,8 +486,12 @@ public class JpegRTPEncoder extends Frame {
             SOF[index++] = (byte) JpegObj.QtableNumber[i];
         }
         markersByteCount=markersByteCount+SOF.length;
-        WriteArray(SOF, out);
-
+        //WriteArray(SOF, out);
+        try {
+            out.write(SOF, 0, 19);
+        } catch (IOException ie) {
+            ie.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 // The DHT Header
         byte DHT1[], DHT2[], DHT3[], DHT4[];
         int bytes, temp, oldindex, intermediateindex;
@@ -507,8 +524,8 @@ public class JpegRTPEncoder extends Frame {
         }
         DHT4[2] = (byte) (((index - 2) >> 8) & 0xFF);
         DHT4[3] = (byte) ((index - 2) & 0xFF);
-        markersByteCount=markersByteCount+DHT4.length;
-        WriteArray(DHT4, out);
+        //markersByteCount=markersByteCount+DHT4.length;
+        //WriteArray(DHT4, out);
 
 
 // Start of Scan Header
@@ -527,8 +544,16 @@ public class JpegRTPEncoder extends Frame {
         SOS[index++] = (byte) JpegObj.Se;
         SOS[index++] = (byte) ((JpegObj.Ah << 4) + JpegObj.Al);
         markersByteCount=markersByteCount+SOS.length;
-        WriteArray(SOS, out);
+        //WriteArray(SOS, out);
+        try {
+            out.write(SOS, 0, 14);
+            //out.write(new byte[] {0x00}, 0, 1); //todo remove
+        } catch (IOException ie) {
+            ie.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         return markersByteCount; //just magic todo
+
     }
 
     void WriteMarker(byte[] data, BufferedOutputStream out) {

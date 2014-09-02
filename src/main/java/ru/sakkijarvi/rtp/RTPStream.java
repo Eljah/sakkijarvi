@@ -181,9 +181,11 @@ public class RTPStream implements RTPAppIntf, Runnable {
                     case 2:
                         buf = toByteArray(hexArray[1]);
                         break;
+
                     case 3:
                         buf = toByteArray(hexArray[2]);
                         break;
+
                     case 4:
                         buf = toByteArray(hexArray[3]);
                         break;

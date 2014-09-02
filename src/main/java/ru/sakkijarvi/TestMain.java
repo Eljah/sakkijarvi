@@ -40,7 +40,7 @@ public class TestMain {
 
    //static int PACKETS_NUMBER=100;
 
-    static int PACKETS_NUMBER=88;
+    static int PACKETS_NUMBER=94;//88;
 
 
     static BufferedImage outputImage = null;
@@ -149,7 +149,7 @@ public static void prepareJpegs()
     {
         try {
             outputImage = ImageIO.read(img);
-            process(outputImage,i);
+            outputImage=process(outputImage,i);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(outputImage, "jpg", baos);
             baos.flush();
@@ -158,7 +158,7 @@ public static void prepareJpegs()
             //JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 80, out);
             JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 255, out); //todo 80 was hardcoded in the underlied method   255 get some problems
             int MARKERS=132;
-            int JPEGMARKERS=589;
+            int JPEGMARKERS=169;//21;//35;//16;//2;//0;//14;//33;//35;//455;//589;
             jpen.Compress(g, (FRAME_SIZE)*g, (FRAME_SIZE), MARKERS,JPEGMARKERS);
 
             arrayImageInByte[g]= ((ByteArrayOutputStream) out).toByteArray();
