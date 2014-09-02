@@ -171,7 +171,7 @@ public class UnicastSample implements RTPAppIntf {
             out[i]=new ByteArrayOutputStream();
 
             JpegRTPEncoder jpen2=new JpegRTPEncoder(outputImage, 80, out[i]);
-            jpen2.Compress(i,i*FRAME_SIZE, FRAME_SIZE,155);
+            jpen2.Compress(i,i*FRAME_SIZE, FRAME_SIZE,155,0);
 
              System.out.println(((ByteArrayOutputStream)out[i]).toByteArray().length);
 

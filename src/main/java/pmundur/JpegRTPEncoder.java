@@ -73,7 +73,7 @@ public class JpegRTPEncoder extends Frame {
             byte[] imageInByte = baos.toByteArray();
             //JpegRTPEncoder jpen=new JpegRTPEncoder(outputImage, 80, out);
             JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 255, out);
-            jpen.Compress(0, 0, 1400, 0);
+            jpen.Compress(0, 0, 1400, 0,0);
 
             FileOutputStream fos = new FileOutputStream(new File("outputtest.jpeg"));
 
@@ -124,23 +124,27 @@ public class JpegRTPEncoder extends Frame {
         return Quality;
     }
 
-    public void Compress(int packetnum, int offset, int frame_size, int markers) {
+    public void Compress(int packetnum, int offset, int frame_size, int markers, int jpegmarkers) {
         fragmentOffset = offset;
         frameSize = frame_size;
         int jpermarkerheadrers=0;
         if (offset == 0) {   //+132
-            frame_size = frame_size - 132;
             WriteRTPJPEGHeaders(outStream, offset);
             if (Quality > 128) {
                 WriteRTPBeforeQuantizationTableHeaders(outStream);
                 WriteQuantizationTableHeaders(outStream);
                 jpermarkerheadrers = WriteHeaders(outStream);
+                System.out.println("We consider RTP|JPEG markers before the compressed data:" + markers);
+                System.out.println("We consider JPEG markers before the compressed data:" + jpegmarkers+" and they really are "+jpermarkerheadrers);
+                System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize -markers - jpegmarkers));
+                WriteCompressedData(offset, frameSize -markers- jpegmarkers, outStream);
             }
         } else {
-            WriteRTPJPEGHeaders(outStream, offset - 132);
+            System.out.println("We taking into account payload offset due to RTP|JPEG markers added in the first packet" + (offset - markers - jpegmarkers)+"while the initial offset was "+offset);
+            WriteRTPJPEGHeaders(outStream, offset - markers);
+            System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize - jpermarkerheadrers));
+            WriteCompressedData(offset-markers-jpegmarkers, frameSize- jpermarkerheadrers, outStream);
         }
-        System.out.println("Markers before the compressed data:" + jpermarkerheadrers);
-        WriteCompressedData(offset, frame_size - jpermarkerheadrers, outStream);
         //WriteRestartMarker(outStream);
 
         if (packetnum == 87) {
@@ -242,15 +246,15 @@ public class JpegRTPEncoder extends Frame {
 
 
         byte[] imageInByteNotCompressed = bytesOutputStream.toByteArray();
-        System.out.println(fragmentOffset);
-        System.out.println(fragmentOffset + frameSize);
+        System.out.println(offset);
+        System.out.println(offset + frame_size);
         System.out.println(imageInByteNotCompressed.length);
         byte[] imageInByteNotCompressedFragmented = Arrays.copyOfRange(imageInByteNotCompressed, Math.min(offset, imageInByteNotCompressed.length - 1), Math.min((offset + frame_size), imageInByteNotCompressed.length - 1));
         System.out.println("Length of fragment is " + imageInByteNotCompressedFragmented.length);
         System.out.println(imageInByteNotCompressedFragmented.length);
         //OutputStream bytesOutputStreamFragmented=new ByteArrayOutputStream();
         try {
-            byte[] SOI = {(byte) 0xd8};    //todo remove, experimental soi marker addition
+            //byte[] SOI = {(byte) 0xd8};    //todo remove, experimental soi marker addition
             //outStream.write(SOI);
             outStream.write(imageInByteNotCompressedFragmented);
         }
@@ -392,8 +396,8 @@ public class JpegRTPEncoder extends Frame {
 
 // the SOI marker
         byte[] SOI = {(byte) 0xFF, (byte) 0xD8};
-        //markersByteCount=markersByteCount+SOI.length;
-        //WriteMarker(SOI, out);
+        markersByteCount=markersByteCount+SOI.length;
+        WriteMarker(SOI, out);
 
 // The order of the following headers is quiet inconsequential.
 // the JFIF header
@@ -524,7 +528,7 @@ public class JpegRTPEncoder extends Frame {
         SOS[index++] = (byte) ((JpegObj.Ah << 4) + JpegObj.Al);
         markersByteCount=markersByteCount+SOS.length;
         WriteArray(SOS, out);
-        return markersByteCount-2; //just magic todo
+        return markersByteCount; //just magic todo
     }
 
     void WriteMarker(byte[] data, BufferedOutputStream out) {

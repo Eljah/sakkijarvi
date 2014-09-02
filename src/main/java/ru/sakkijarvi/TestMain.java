@@ -157,8 +157,9 @@ public static void prepareJpegs()
             OutputStream out = new ByteArrayOutputStream();
             //JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 80, out);
             JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 255, out); //todo 80 was hardcoded in the underlied method   255 get some problems
-            int MARKERS=0;
-            jpen.Compress(g, (FRAME_SIZE-MARKERS)*g, (FRAME_SIZE), g*MARKERS);
+            int MARKERS=132;
+            int JPEGMARKERS=589;
+            jpen.Compress(g, (FRAME_SIZE)*g, (FRAME_SIZE), MARKERS,JPEGMARKERS);
 
             arrayImageInByte[g]= ((ByteArrayOutputStream) out).toByteArray();
 
