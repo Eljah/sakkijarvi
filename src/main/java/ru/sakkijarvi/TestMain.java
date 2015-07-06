@@ -40,7 +40,7 @@ public class TestMain {
 
    //static int PACKETS_NUMBER=100;
 
-    static int PACKETS_NUMBER=94;//88;
+    static int PACKETS_NUMBER=91;//88//94;
 
 
     static BufferedImage outputImage = null;
@@ -140,7 +140,7 @@ public static void prepareJpegs()
     //File img = new File("/home/ilya/test00000.jpeg");
 
     arrayImageInByte=new byte[PACKETS_NUMBER][];
-    final int FRAME_SIZE = 1392;// 1260;  //1300
+    final int FRAME_SIZE = 1428;//1392;// 1260;  //1300
 
     int i=20;
 
@@ -155,10 +155,11 @@ public static void prepareJpegs()
             baos.flush();
 
             OutputStream out = new ByteArrayOutputStream();
+            //JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 50, out);
             //JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 80, out);
             JpegRTPEncoder jpen = new JpegRTPEncoder(outputImage, 255, out); //todo 80 was hardcoded in the underlied method   255 get some problems
             int MARKERS=132;
-            int JPEGMARKERS=169;//21;//35;//16;//2;//0;//14;//33;//35;//455;//589;
+            int JPEGMARKERS=169;//169;//21;//35;//16;//2;//0;//14;//33;//35;//455;//589;
             jpen.Compress(g, (FRAME_SIZE)*g, (FRAME_SIZE), MARKERS,JPEGMARKERS);
 
             arrayImageInByte[g]= ((ByteArrayOutputStream) out).toByteArray();
@@ -204,7 +205,9 @@ public static void prepareJpegs()
         ServletHolder testServletHolder = new ServletHolder(TestRtspServlet.class);
 
         //testApp.addServlet(rootServletHolder, "/hello/*");
-        testApp.addServlet(testServletHolder, "/auto/*");
+        //testApp.addServlet(testServletHolder, "/auto/*");
+        testApp.addServlet(testServletHolder, "/jpeg/*");
+
 
         // Specify the Session ID Manager
         HashSessionIdManager idmanager = new HashSessionIdManager();

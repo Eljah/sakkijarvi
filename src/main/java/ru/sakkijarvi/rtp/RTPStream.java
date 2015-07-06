@@ -22,8 +22,8 @@ public class RTPStream implements RTPAppIntf, Runnable {
     public int server_rtp_port = 59720;
     public int server_rtcp_port = 59721;
 
-    public int client_rtp_port = 59820;
-    public int client_rtcp_port = 59820;
+    public int client_rtp_port = 22222;//2222;
+    public int client_rtcp_port = 22222;//2223;
 
     RTPSession rtpSession;
     RTCPSession rtcpSession;
@@ -99,6 +99,42 @@ public class RTPStream implements RTPAppIntf, Runnable {
             };
 
 
+    byte[] byteArray1=toByteArray(hexArray[0]);
+    byte[] byteArray2=toByteArray(hexArray[1]);
+    byte[] byteArray3=toByteArray(hexArray[2]);
+    byte[] byteArray4=toByteArray(hexArray[3]);
+    byte[] byteArray5=toByteArray(hexArray[4]);
+    byte[] byteArray6=toByteArray(hexArray[5]);
+    byte[] byteArray7=toByteArray(hexArray[6]);
+    byte[] byteArray8=toByteArray(hexArray[7]);
+    byte[] byteArray9=toByteArray(hexArray[8]);
+    byte[] byteArray10=toByteArray(hexArray[9]);
+    byte[] byteArray11=toByteArray(hexArray[10]);
+    byte[] byteArray12=toByteArray(hexArray[11]);
+    byte[] byteArray13=toByteArray(hexArray[12]);
+    byte[] byteArray14=toByteArray(hexArray[13]);
+    byte[] byteArray15=toByteArray(hexArray[14]);
+    byte[] byteArray16=toByteArray(hexArray[15]);
+    byte[] byteArray17=toByteArray(hexArray[16]);
+    byte[] byteArray18=toByteArray(hexArray[17]);
+    byte[] byteArray19=toByteArray(hexArray[18]);
+    byte[] byteArray20=toByteArray(hexArray[19]);
+    byte[] byteArray21=toByteArray(hexArray[20]);
+    byte[] byteArray22=toByteArray(hexArray[21]);
+    byte[] byteArray23=toByteArray(hexArray[22]);
+    byte[] byteArray24=toByteArray(hexArray[23]);
+    byte[] byteArray25=toByteArray(hexArray[24]);
+    byte[] byteArray26=toByteArray(hexArray[25]);
+    /*
+    byte[] byteArray27=toByteArray(hexArray[26]);
+    byte[] byteArray28=toByteArray(hexArray[27]);
+    byte[] byteArray29=toByteArray(hexArray[28]);
+    byte[] byteArray30=toByteArray(hexArray[29]);
+    byte[] byteArray31=toByteArray(hexArray[30]);
+    byte[] byteArray32=toByteArray(hexArray[31]);
+
+      */
+
     public void prepareBroadcasting() throws SocketException {
         RTPsocket = new DatagramSocket(server_rtp_port);
         RTCPsocket = new DatagramSocket(server_rtcp_port);
@@ -116,6 +152,8 @@ public class RTPStream implements RTPAppIntf, Runnable {
         // 4. Add participants we want to notify upon registration
         // a. Hopefully nobody is listening on this port.
         Participant part = new Participant(clientIP.getHostAddress(), server_rtp_port, server_rtcp_port);
+        //Participant part = new Participant(clientIP.getHostAddress(), client_rtp_port, client_rtcp_port);    //todo
+
         //Participant part = new Participant("192.168.0.107", theServer.RTP_dest_port, theServer.RTP_dest_port + 1);
         //System.out.println(" "+part.getCNAME()+" "+part.getSSRC());
         rtpSession.addParticipant(part);
@@ -176,102 +214,102 @@ public class RTPStream implements RTPAppIntf, Runnable {
                 switch (counter) {
                     /*
                     case 1:
-                        buf = toByteArray(hexArray[0]);
+                        buf = byteArray1;
                         break;
                     case 2:
-                        buf = toByteArray(hexArray[1]);
+                        buf = byteArray2;
                         break;
 
                     case 3:
-                        buf = toByteArray(hexArray[2]);
+                        buf = byteArray3;
                         break;
 
                     case 4:
-                        buf = toByteArray(hexArray[3]);
+                        buf =  byteArray4;
                         break;
                     case 5:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray5;
                         break;
                     case 6:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray6;
                         break;
                     case 7:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray7;
                         break;
                     case 8:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray8;
                         break;
                     case 9:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray9;
                         break;
                     case 10:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray10;
                         break;
                     case 11:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray11;
                         break;
                     case 12:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray12;
                         break;
                     case 13:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray13;
                         break;
                     case 14:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray14;
                         break;
                     case 15:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray15;
                         break;
                     case 16:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray16;
                         break;
                     case 17:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray17;
                         break;
                     case 18:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray18;
                         break;
                     case 19:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray19;
                         break;
                     case 20:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray20;
                         break;
                     case 21:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray21;
                         break;
                     case 22:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray22;
                         break;
                     case 23:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray23;
                         break;
                     case 24:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray24;
                         break;
                     case 25:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray25;
                         break;
                     case 26:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                     case 27:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                     case 28:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                     case 29:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                     case 30:
-                        buf = toByteArray(hexArray[2]);
+                       buf =  byteArray26;
                         break;
                     case 31:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                     case 32:
-                        buf = toByteArray(hexArray[2]);
+                        buf =  byteArray26;
                         break;
                       */
                     default:

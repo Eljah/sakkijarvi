@@ -139,6 +139,15 @@ public class JpegRTPEncoder extends Frame {
                 System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize -markers - jpegmarkers));
                 WriteCompressedData(offset, frameSize - markers - jpegmarkers, outStream);
             }
+           else {
+                WriteRTPBeforeQuantizationTableHeaders(outStream);
+                WriteQuantizationTableHeaders(outStream);
+                jpermarkerheadrers = WriteHeaders(outStream);
+                System.out.println("We consider RTP|JPEG markers before the compressed data:" + markers);
+                System.out.println("We consider JPEG markers before the compressed data:" + jpegmarkers+" and they really are "+jpermarkerheadrers);
+                System.out.println("Actually the size of compressed data placed to the current packet will be:" + (frameSize -markers - jpegmarkers));
+                WriteCompressedData(offset, frameSize - markers - jpegmarkers, outStream);
+            }
         } else {
             System.out.println("We taking into account payload offset due to RTP|JPEG markers added in the first packet" + (offset - markers - jpegmarkers) + "while the initial offset was " + offset);
             WriteRTPJPEGHeaders(outStream, offset - markers);
@@ -146,10 +155,11 @@ public class JpegRTPEncoder extends Frame {
             WriteCompressedData(offset-markers-jpegmarkers, frameSize- jpermarkerheadrers, outStream);
         }
         //WriteRestartMarker(outStream);
+        System.out.println("Packet number: "+packetnum);
 
-        if (packetnum == 93){//87) {
+        if (packetnum == 90){//87) {
            WriteEOI(outStream);
-            //WriteEOI(outStream);
+           //WriteEOI(outStream);
         }
         try {
             outStream.flush();

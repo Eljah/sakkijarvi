@@ -26,8 +26,8 @@ public class TestRtspServlet extends RtspServlet {
     String RTSP_ID="123456";
     int local_rtp_port = 59720;
     int local_rtcp_port = 59721;
-    int RTP_dest_port = 59820; //destination port for RTP packets  (given by the RTSP Client)
-    int RTCP_dest_port = 59821; //destination port for RTP packets  (given by the RTSP Client)
+    int RTP_dest_port = 22222; //2222 //destination port for RTP packets  (given by the RTSP Client)
+    int RTCP_dest_port = 22223; //2223 //destination port for RTP packets  (given by the RTSP Client)
     RTPStream rtpStream;
 
     public static void setImage( byte[][] _array)
@@ -56,16 +56,19 @@ public class TestRtspServlet extends RtspServlet {
         super.doDescribe(request, response);
         //doGet(request,response);
 
+        /*
         rtpStream=new RTPStream(InetAddress.getByName(request.getRemoteAddr()), RTP_dest_port, RTCP_dest_port, local_rtp_port, local_rtcp_port);
         rtpStream.setImage(arrayImageInByte);
         rtpStream.prepareBroadcasting();
-
+          */
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
                 Locale.ENGLISH);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String remoteIP=request.getLocalAddr();
 
         response.setHeader("CSeq", "3");
+        //response.setHeader("CSeq", "1");
+
         //"Date: " +
         /*
         "Content-Type: application/sdp" + CRLF +
@@ -82,7 +85,7 @@ public class TestRtspServlet extends RtspServlet {
         String RTSP_ID="123456";
         String MJPEG_TYPE="26";
 
-        int RTP_dest_port = 59820; //destination port for RTP packets  (given by the RTSP Client)
+        //int RTP_dest_port = RTP_dest_port; //destination port for RTP packets  (given by the RTSP Client)
 
 
         SDP responced=new SDP("");
@@ -124,6 +127,8 @@ public class TestRtspServlet extends RtspServlet {
         String remoteIP=request.getLocalAddr();
 
         response.setHeader("CSeq", "4");
+        //response.setHeader("CSeq", "2");
+
         response.setHeader("Transport", "RTP/AVP;unicast;client_port=" + RTP_dest_port + "-" + RTCP_dest_port + ";server_port=" + local_rtp_port + "-" + local_rtcp_port + ";source="+remoteIP+";ssrc=11;mode=\"PLAY\"");
         response.setHeader("Content-Base", "rtsp://"+remoteIP+":"+request.getLocalPort()+request.getRequestURI());
         response.setHeader("Date", dateFormat.format(new Date()));
@@ -149,8 +154,9 @@ public class TestRtspServlet extends RtspServlet {
         long longStartTime=System.currentTimeMillis();
         String longTimeString=	StaticProcs.bytesToUIntLong(StaticProcs.uIntLongToByteWord(longStartTime), 0)+"";
         int seqString = 0;
-        rtpStream.setStartTime(longStartTime);
+        //rtpStream.setStartTime(longStartTime);
 
+        //response.setHeader("CSeq", "3");
         response.setHeader("CSeq", "5");
         response.setHeader("RTP-Info", "url=rtsp://"+request.getLocalAddr()+":"+request.getLocalPort()+request.getRequestURI()+"/stream=0;seq=" + seqString + ";rtptime=" + longTimeString);
         response.setHeader("Range", "npt=0,0-");
@@ -171,7 +177,14 @@ public class TestRtspServlet extends RtspServlet {
 
 
         response.setStatus(HttpServletResponse.SC_OK);
-       rtpStream.startBroadcasting();
+
+        Thread.sleep(5000);
+        //todo remove it back to earlier request
+        rtpStream=new RTPStream(InetAddress.getByName(request.getRemoteAddr()), RTP_dest_port, RTCP_dest_port, local_rtp_port, local_rtcp_port);
+        rtpStream.setImage(arrayImageInByte);
+        rtpStream.prepareBroadcasting();
+        rtpStream.setStartTime(longStartTime);
+        rtpStream.startBroadcasting();
         Thread broadcast=new Thread(rtpStream);
         broadcast.start();
 
