@@ -1,6 +1,6 @@
 package ru.sakkijarvi.videogen;
 
-import org.jcodec.api.SequenceEncoder;
+import org.jcodec.api.awt.AWTSequenceEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -61,7 +61,7 @@ public class VideoGenerator {
      * Encodes frames into an H.264 MP4 file using JCodec.
      */
     public File encodeH264(File output, List<BufferedImage> frames) throws IOException {
-        SequenceEncoder enc = new SequenceEncoder(output);
+        AWTSequenceEncoder enc = AWTSequenceEncoder.createSequenceEncoder(output, 25);
         for (BufferedImage f : frames) {
             enc.encodeImage(f);
         }
