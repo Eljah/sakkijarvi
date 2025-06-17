@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class VideoGeneratorTest {
 
+    @org.junit.Ignore("requires ffmpeg and gstreamer")
     @Test
     public void testGeneratedVideoAcceptedByTools() throws Exception {
         BufferedImage background = ImageIO.read(new File("fon.jpeg"));
